@@ -9,13 +9,12 @@ const config = {
   rotationX: 0.3,
   rotationY: 0.5,
   rotationZ: 0,
+  lockX: false,
+  lockY: false,
   autoRotate: true,
   rotationSpeed: 0.002,
-  showEquator: true,
-  showPoles: true,
   showLatitude: true,
   showLongitude: true,
-  showLabels: true,
   radius: 250,
   lineWidth: 1.5
 };
@@ -27,11 +26,10 @@ gui.add(config, 'rotationSpeed', 0.001, 0.01).name('Vitesse rotation');
 gui.add(config, 'rotationX', 0, Math.PI * 2).name('Rotation X').listen();
 gui.add(config, 'rotationY', 0, Math.PI * 2).name('Rotation Y').listen();
 gui.add(config, 'rotationZ', 0, Math.PI * 2).name('Rotation Z').listen();
-gui.add(config, 'showEquator').name('Équateur');
-gui.add(config, 'showPoles').name('Pôles');
+gui.add(config, 'lockX').name('Verrouiller X')
+gui.add(config, 'lockY').name('Verrouiller Y')
 gui.add(config, 'showLatitude').name('Latitude');
 gui.add(config, 'showLongitude').name('Longitude');
-gui.add(config, 'showLabels').name('Labels');
 gui.add(config, 'radius', 100, 400).name('Rayon');
 gui.add(config, 'lineWidth', 0.5, 5).name('Épaisseur ligne');
 
@@ -124,22 +122,6 @@ function drawCircle3D(radius, tilt, rotation, color, dashed = false) {
   ctx.stroke();
 }
 
-function drawPoint3D(x, y, z, label, color = '#fff') {
-  let point = rotate3D({ x, y, z });
-  const proj = project(point);
-  
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.arc(proj.x, proj.y, 4, 0, Math.PI * 2);
-  ctx.fill();
-  
-  if (config.showLabels && label) {
-    ctx.fillStyle = color;
-    ctx.font = '12px monospace';
-    ctx.fillText(label, proj.x + 10, proj.y - 10);
-  }
-}
-
 function animate() {
   ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -148,25 +130,15 @@ function animate() {
   
   // Auto rotation
   if (config.autoRotate) {
-    config.rotationY += config.rotationSpeed;
-    config.rotationX += config.rotationSpeed * 0.3;
-  }
-  
-  // Celestial equator
-  if (config.showEquator) {
-    drawCircle3D(r, 0, 0, '#4CAF50');
-  }
-  
-  // Galactic equator (incliné à 62°)
-  if (config.showEquator) {
-    drawCircle3D(r, Math.PI / 3, 0, '#9C27B0', true);
+    config.rotationY += config.lockY ? 0 : config.rotationSpeed;
+    config.rotationX += config.lockX ? 0 : config.rotationSpeed * 0.3;
   }
   
   // Longitude circles
   if (config.showLongitude) {
     for (let i = 0; i < 6; i++) {
       const angle = (i / 6) * Math.PI;
-      drawCircle3D(r, Math.PI / 2, angle, 'rgba(100, 150, 255, 0.3)');
+      drawCircle3D(r, Math.PI / 2, angle, 'rgba(0, 0, 0, 1)');
     }
   }
   
@@ -175,26 +147,8 @@ function animate() {
     for (let i = 1; i < 4; i++) {
       const lat = (i / 4) * Math.PI / 2;
       const latRadius = r * Math.cos(lat);
-      drawCircle3D(latRadius, 0, 0, 'rgba(100, 200, 255, 0.3)');
+      drawCircle3D(latRadius, 0, 0, 'rgba(0, 0, 0, 1)');
     }
-  }
-  
-  // Poles
-  if (config.showPoles) {
-    drawPoint3D(0, r, 0, '', '#66ffff');
-    drawPoint3D(0, -r, 0, '', '#66ffff');
-    
-    // Galactic poles
-    const galPoleY = r * Math.cos(Math.PI / 3);
-    const galPoleZ = r * Math.sin(Math.PI / 3);
-    drawPoint3D(0, galPoleY, galPoleZ, '', '#ff66ff');
-    drawPoint3D(0, -galPoleY, -galPoleZ, '', '#ff66ff');
-  }
-  
-  // Some constellation points
-  if (config.showLabels) {
-    drawPoint3D(r * 0.7, r * 0.5, r * 0.3, '', '#ffaa00');
-    drawPoint3D(r * 0.6, -r * 0.4, -r * 0.5, '', '#ffaa00');
   }
   
   requestAnimationFrame(animate);
