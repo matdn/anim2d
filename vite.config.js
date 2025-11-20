@@ -6,6 +6,11 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        squares: resolve(__dirname, 'squares.html'),
+        circles: resolve(__dirname, 'circles.html'),
+        triangles: resolve(__dirname, 'triangles.html'),
+        polygons: resolve(__dirname, 'polygons.html'),
+        grid: resolve(__dirname, 'grid.html'),
         ellipses: resolve(__dirname, 'ellipses.html'),
         rectangles: resolve(__dirname, 'rectangles.html'),
         waves: resolve(__dirname, 'waves.html'),
