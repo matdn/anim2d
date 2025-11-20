@@ -23,14 +23,9 @@ const config = {
 const gui = new dat.GUI();
 gui.add(config, 'rows', 2, 8, 1).name('Lignes');
 gui.add(config, 'cols', 2, 8, 1).name('Colonnes');
-gui.add(config, 'a', 1, 10, 1).name('Fréquence A');
-gui.add(config, 'b', 1, 10, 1).name('Fréquence B');
 gui.add(config, 'delta', 0, Math.PI * 2).name('Phase');
 gui.add(config, 'speed', 0.001, 0.1).name('Vitesse');
-gui.add(config, 'showPoints').name('Afficher points');
-gui.add(config, 'pointSize', 0, 10).name('Taille points');
 gui.add(config, 'lineWidth', 0.5, 5).name('Épaisseur ligne');
-gui.add(config, 'colorHue', 0, 360).name('Teinte');
 gui.add(config, 'animate').name('Animer');
 
 // Resize canvas
@@ -61,26 +56,10 @@ function drawLissajous(x, y, size, a, b, delta, phase = 0) {
   for (let i = 1; i < points.length; i++) {
     ctx.lineTo(points[i].x, points[i].y);
   }
-  ctx.strokeStyle = `hsl(${config.colorHue}, 70%, 60%)`;
+  ctx.strokeStyle = `hsl(0%, 70%, 60%)`;
   ctx.lineWidth = config.lineWidth;
   ctx.stroke();
-  
-  // Draw points at nodes
-  if (config.showPoints) {
-    ctx.fillStyle = '#ff4444';
-    
-    // Calculate number of nodes
-    const numNodes = Math.max(a, b) * 2;
-    for (let i = 0; i < numNodes; i++) {
-      const nodeIndex = Math.floor((i / numNodes) * points.length);
-      if (nodeIndex < points.length) {
-        const p = points[nodeIndex];
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, config.pointSize, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-  }
+
 }
 
 function animate() {
