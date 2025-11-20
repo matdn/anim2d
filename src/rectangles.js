@@ -12,7 +12,6 @@ const config = {
   maxSize: 80,
   rotation: true,
   rotationSpeed: 0.01,
-  colorHue: 120,
   strokeWidth: 2
 };
 
@@ -24,7 +23,6 @@ gui.add(config, 'minSize', 10, 50).name('Taille min');
 gui.add(config, 'maxSize', 50, 200).name('Taille max');
 gui.add(config, 'rotation').name('Rotation');
 gui.add(config, 'rotationSpeed', 0.001, 0.05).name('Vitesse rotation');
-gui.add(config, 'colorHue', 0, 360).name('Teinte');
 gui.add(config, 'strokeWidth', 1, 10).name('Épaisseur trait');
 
 // Resize canvas
@@ -39,7 +37,7 @@ window.addEventListener('resize', resize);
 let time = 0;
 
 function animate() {
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+  ctx.fillStyle = 'rgba(255, 255, 255, 1)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   const centerX = canvas.width / 2;
@@ -60,13 +58,10 @@ function animate() {
       ctx.rotate(time * config.rotationSpeed * (i % 2 === 0 ? 1 : -1) + i);
     }
     
-    const hue = (config.colorHue + i * 15) % 360;
-    ctx.strokeStyle = `hsl(${hue}, 70%, 50%)`;
+    ctx.strokeStyle = `hsl(0%, 0%, 0%)`;
     ctx.lineWidth = config.strokeWidth;
     ctx.strokeRect(-size / 2, -size / 2, size, size);
     
-    ctx.fillStyle = `hsla(${hue}, 70%, 50%, 0.2)`;
-    ctx.fillRect(-size / 2, -size / 2, size, size);
     
     ctx.restore();
   }
